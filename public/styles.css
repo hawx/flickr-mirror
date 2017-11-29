@@ -1,0 +1,64 @@
+body {
+    font: 16px/1.3 Helvetica, Arial, sans-serif;
+}
+
+.title {
+    font-weight: normal;
+    font-size: 26px;
+    margin: 2rem 0;
+}
+
+.title .seg {
+    color: #000;
+    text-decoration: none;
+}
+
+.title .sep {
+    color: #bbb;
+}
+
+.container {
+    max-width: 720px;
+    margin: 2rem;
+}
+
+/* photoset */
+.photoset {
+    margin-bottom: 3rem;
+}
+
+.photoset a {
+    text-decoration: none;
+    color: #000;
+}
+
+.photoset img {
+    width: 100%;
+}
+
+.photoset h3 {
+    text-align: center;
+    margin: 1rem 0;
+    font-size: 20px;
+    font-weight: normal;
+}
+
+/* photo */
+.photo {
+    margin-bottom: 3rem;
+}
+
+.photo a {
+    text-decoration: none;
+    color: #000;
+}
+
+.photo img {
+    width: 100%;
+}
+
+.photo h3 {
+    margin: 1rem 0;
+    font-size: 16px;
+    font-weight: normal;
+}

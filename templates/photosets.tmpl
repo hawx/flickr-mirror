@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Photosets</title>
+    <link rel="stylesheet" href="/public/styles.css" type="text/css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1 class="title">
+        <a href="/" class="seg">hawx~</a>
+        <span class="sep">/</span>
+        <a href="/photosets" class="seg">photosets</a>
+      </h1>
+
+      {{ range . }}
+      <div class="photoset">
+        <a href="/photosets/{{.Id}}">
+          <img src="/photo/{{.Cover}}/photo_z.jpg" />
+          <h3>{{.Title}}</h3>
+        </a>
+      </div>
+      {{ end }}
+    </div>
+  </body>
+</html>

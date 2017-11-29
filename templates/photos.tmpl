@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Photos</title>
+    <link rel="stylesheet" href="/public/styles.css" type="text/css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1 class="title">
+        <a href="/" class="seg">hawx~</a>
+      </h1>
+
+      {{ range .Photos }}
+      <div class="photo">
+        <a href="/photos/{{.Id}}">
+          <img src="/photo/{{.Id}}/photo_z.jpg" />
+          <h3>{{.Title}}</h3>
+        </a>
+      </div>
+      {{ end }}
+
+      {{ if .PrevPage }}
+      <a href="{{.PrevPage}}">Previous</a>
+      {{ end }}
+
+      {{ if .NextPage }}
+      <a href="{{.NextPage}}">Next</a>
+      {{ end }}
+    </div>
+  </body>
+</html>
