@@ -22,6 +22,20 @@ body {
     margin: 2rem;
 }
 
+.max {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.max .container {
+    margin: 2rem 2rem 0;
+}
+
 /* photoset */
 .photoset {
     margin-bottom: 3rem;
@@ -48,13 +62,19 @@ body {
     margin-bottom: 3rem;
 }
 
+.max .photo {
+    flex: 1;
+}
+
 .photo a {
     text-decoration: none;
     color: #000;
-}
-
-.photo img {
+    height: 100%;
     width: 100%;
+    display: block;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: 2rem 0;
 }
 
 .photo h3 {

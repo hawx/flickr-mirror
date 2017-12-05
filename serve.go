@@ -166,7 +166,12 @@ type photoRecord struct {
 }
 
 func getPhotos(db *sql.DB, pageNo int) (records []photoRecord, err error) {
-	rows, err := db.Query("SELECT Id, Title FROM photo ORDER BY Id DESC LIMIT 10 OFFSET ?",
+	rows, err := db.Query(`
+    SELECT Id, Title
+    FROM photo
+    ORDER BY DateUploaded DESC
+    LIMIT 10
+    OFFSET ?`,
 		pageNo*10)
 	if err != nil {
 		return records, err
@@ -198,7 +203,7 @@ func getPhotosInSet(db *sql.DB, photoset string, pageNo int) (records []photoRec
     FROM photo
     INNER JOIN photoset_member ON photo.Id = photoset_member.Photo
     WHERE photoset_member.Photoset = ?
-    ORDER BY Id DESC
+    ORDER BY DateUploaded DESC
     LIMIT 10
     OFFSET ?`,
 		photoset,

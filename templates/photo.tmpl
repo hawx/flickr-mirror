@@ -6,19 +6,20 @@
     <link rel="stylesheet" href="/public/styles.css" type="text/css" />
   </head>
   <body>
-    <div class="container">
-      <h1 class="title">
-        <a href="/" class="seg">hawx~</a>
-        <span class="sep">/</span>
-        <a href="/" class="seg">photos</a>
-        <span class="sep">/</span>
-        <a href="/photos/{{.Id}}" class="seg">{{.Id}}</a>
-      </h1>
+    <div class="max">
+      <div class="container">
+        <h1 class="title">
+          <a href="/" class="seg">hawx~</a>
+          <span class="sep">/</span>
+          <a href="/" class="seg">photos</a>
+          <span class="sep">/</span>
+          <a href="/photos/{{.Id}}" class="seg">{{.Id}}</a>
+        </h1>
+      </div>
 
       <div class="photo">
-        <a href="/photos/{{.Id}}">
-          <img src="/photo/{{.Id}}/photo_z.jpg" />
-          <h3>{{.Title}}</h3>
+        <a href="/photos/{{.Id}}" style="background-image: url('/photo/{{.Id}}/photo_z.jpg');">
+          <!-- <h3>{{.Title}}</h3> -->
         </a>
       </div>
     </div>
