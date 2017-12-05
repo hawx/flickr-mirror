@@ -44,8 +44,9 @@ type setData struct {
 }
 
 type photoData struct {
-	Id    string `json:"id"`
-	Title string `json:"title"`
+	Id           string `json:"id"`
+	Title        string `json:"title"`
+	DateUploaded int    `json:"dateuploaded,string"`
 }
 
 func runIndex(root string) error {
@@ -78,7 +79,8 @@ func runIndex(root string) error {
 
     CREATE TABLE photo (
       Id    TEXT PRIMARY KEY,
-      Title TEXT
+      Title TEXT,
+      DateUploaded INTEGER
     );
   `)
 	if err != nil {
