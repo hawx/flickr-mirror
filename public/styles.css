@@ -33,6 +33,7 @@ body {
     background-repeat: no-repeat;
     background-size: contain;
     background-position: center center;
+    background-color: black;
     justify-content: space-between;
 }
 
