@@ -30,10 +30,24 @@ body {
     height: 100vh;
     display: flex;
     flex-direction: column;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center center;
+    justify-content: space-between;
 }
 
 .max .container {
-    margin: 2rem 2rem 0;
+    padding: 1rem 2rem;
+    margin: 0;
+    width: 100%;
+    max-width: initial;
+    background: rgba(255,255,255,.9);
+    opacity: 0;
+    transition: opacity .2s;
+}
+
+.max .container:hover {
+    opacity: 1;
 }
 
 /* photoset */
@@ -69,12 +83,17 @@ body {
 .photo a {
     text-decoration: none;
     color: #000;
-    height: 100%;
-    width: 100%;
-    display: block;
-    background-repeat: no-repeat;
-    background-size: contain;
-    background-position: 2rem 0;
+    /* height: 100%; */
+    /* width: 100%; */
+    /* display: block; */
+    /* background-repeat: no-repeat; */
+    /* background-size: contain; */
+    /* background-position: 2rem 0; */
+}
+
+.photo img {
+    max-height: 100%;
+    max-width: 100%;
 }
 
 .photo h3 {

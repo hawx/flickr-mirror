@@ -36,6 +36,13 @@ type photosCtx struct {
 	PrevPage string
 }
 
+type photoCtx struct {
+	Id        string
+	Title     string
+	PrevPhoto string
+	NextPhoto string
+}
+
 func runServe(root string) error {
 	db, err := sql.Open("sqlite3", "db")
 	if err != nil {
@@ -84,8 +91,29 @@ func runServe(root string) error {
 			return
 		}
 
+		ctx := photoCtx{
+			Id:    photo.Id,
+			Title: photo.Title,
+		}
+
+		nextPhoto, err := getNextPhoto(db, photo.DateUploaded)
+		if err == nil {
+			ctx.NextPhoto = "/photos/" + nextPhoto.Id
+		} else if err != sql.ErrNoRows {
+			http.Error(w, err.Error(), 500)
+			return
+		}
+
+		prevPhoto, err := getPrevPhoto(db, photo.DateUploaded)
+		if err == nil {
+			ctx.PrevPhoto = "/photos/" + prevPhoto.Id
+		} else if err != sql.ErrNoRows {
+			http.Error(w, err.Error(), 500)
+			return
+		}
+
 		w.Header().Set("Content-Type", "text/html")
-		err = templates.ExecuteTemplate(w, "photo.tmpl", photo)
+		err = templates.ExecuteTemplate(w, "photo.tmpl", ctx)
 		if err != nil {
 			http.Error(w, err.Error(), 500)
 			return
@@ -161,8 +189,9 @@ type photosetMemberRecord struct {
 }
 
 type photoRecord struct {
-	Id    string
-	Title string
+	Id           string
+	Title        string
+	DateUploaded int
 }
 
 func getPhotos(db *sql.DB, pageNo int) (records []photoRecord, err error) {
@@ -190,10 +219,39 @@ func getPhotos(db *sql.DB, pageNo int) (records []photoRecord, err error) {
 }
 
 func getPhoto(db *sql.DB, photo string) (record photoRecord, err error) {
-	row := db.QueryRow("SELECT Id, Title FROM photo WHERE Id = ?",
+	row := db.QueryRow(`
+    SELECT Id, Title, DateUploaded
+    FROM photo
+    WHERE Id = ?`,
 		photo)
 
-	err = row.Scan(&record.Id, &record.Title)
+	err = row.Scan(&record.Id, &record.Title, &record.DateUploaded)
+	return record, err
+}
+
+func getPrevPhoto(db *sql.DB, date int) (record photoRecord, err error) {
+	row := db.QueryRow(`
+    SELECT Id, Title, DateUploaded
+    FROM photo
+    WHERE DateUploaded < ?
+    ORDER BY DateUploaded DESC
+    LIMIT 1`,
+		date)
+
+	err = row.Scan(&record.Id, &record.Title, &record.DateUploaded)
+	return record, err
+}
+
+func getNextPhoto(db *sql.DB, date int) (record photoRecord, err error) {
+	row := db.QueryRow(`
+    SELECT Id, Title, DateUploaded
+    FROM photo
+    WHERE DateUploaded > ?
+    ORDER BY DateUploaded ASC
+    LIMIT 1`,
+		date)
+
+	err = row.Scan(&record.Id, &record.Title, &record.DateUploaded)
 	return record, err
 }
 

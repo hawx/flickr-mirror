@@ -88,6 +88,7 @@ func runIndex(root string) error {
 	}
 
 	{
+		log.Println("reading user data")
 		// read `root/data.json` as `userData` and put in `stream` table
 		file, err := os.Open(filepath.Join(root, "data.json"))
 		if err != nil {
@@ -107,6 +108,7 @@ func runIndex(root string) error {
 		}
 	}
 
+	log.Println("reading sets")
 	// read `root/sets/*/data.json` as `setData` and put in `set` table and `set_photo` table
 	err = filepath.Walk(filepath.Join(root, "sets"), func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -148,6 +150,7 @@ func runIndex(root string) error {
 		return err
 	}
 
+	log.Println("reading photos")
 	// read `root/photos/*/data.json` as `photoData` and put in `photo` table
 	return filepath.Walk(filepath.Join(root, "photos"), func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -166,8 +169,8 @@ func runIndex(root string) error {
 				return errors.WithMessage(err, path)
 			}
 
-			_, err = db.Exec(`INSERT INTO photo(Id, Title) VALUES (?, ?)`,
-				v.Id, v.Title)
+			_, err = db.Exec(`INSERT INTO photo(Id, Title, DateUploaded) VALUES (?, ?, ?)`,
+				v.Id, v.Title, v.DateUploaded)
 			if err != nil {
 				return errors.WithMessage(err, path)
 			}

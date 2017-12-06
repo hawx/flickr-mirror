@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="/public/styles.css" type="text/css" />
   </head>
   <body>
-    <div class="max">
+    <div class="max" style="background-image: url('/photo/{{.Id}}/photo_z.jpg">
       <div class="container">
         <h1 class="title">
           <a href="/" class="seg">hawx~</a>
@@ -17,11 +17,40 @@
         </h1>
       </div>
 
-      <div class="photo">
-        <a href="/photos/{{.Id}}" style="background-image: url('/photo/{{.Id}}/photo_z.jpg');">
-          <!-- <h3>{{.Title}}</h3> -->
-        </a>
+      <div class="container">
+        <div class="controls">
+          {{ if .NextPhoto }}
+          <a href="{{.NextPhoto}}">Next</a>
+          {{ end }}
+
+          {{ if .PrevPhoto }}
+          <a href="{{.PrevPhoto}}">Previous</a>
+          {{ end }}
+        </div>
       </div>
     </div>
+
+    <script type="text/javascript">
+      window.onload = function() {
+        function nextPage() {
+          window.location = '{{.NextPhoto}}';
+        }
+        function prevPage() {
+          window.location = '{{.PrevPhoto}}';
+        }
+        function handleKeyPress(e) {
+          var ch = String.fromCharCode(e.keyCode || e.charCode);
+          switch (ch) {
+            {{ if .NextPhoto }}case 'j':
+              nextPage();
+              break;{{ end }}
+            {{ if .PrevPhoto }}case 'k':
+              prevPage();
+              break;{{ end }}
+          }
+        }
+        document.onkeypress = handleKeyPress;
+      }
+    </script>
   </body>
 </html>
