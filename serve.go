@@ -36,6 +36,13 @@ type photosCtx struct {
 	PrevPage string
 }
 
+type photosetCtx struct {
+	Photos   []photoRecord
+	Photoset string
+	NextPage string
+	PrevPage string
+}
+
 type photoCtx struct {
 	Id        string
 	Title     string
@@ -147,7 +154,8 @@ func runServe(root string) error {
 		}
 
 		w.Header().Set("Content-Type", "text/html")
-		ctx := photosCtx{
+		ctx := photosetCtx{
+			Photoset: photoset,
 			Photos:   photos,
 			NextPage: "/photosets/" + photoset + "/?page=" + strconv.Itoa(pageNo+1),
 		}
@@ -156,9 +164,47 @@ func runServe(root string) error {
 			ctx.PrevPage = "/photosets/" + photoset + "/?page=" + strconv.Itoa(pageNo-1)
 		}
 
-		err = templates.ExecuteTemplate(w, "photos.tmpl", ctx)
+		err = templates.ExecuteTemplate(w, "photoset.tmpl", ctx)
 		if err != nil {
 			http.Error(w, err.Error(), 500)
+		}
+	})
+
+	mux.HandleFunc("/photosets/:photoset/photos/:photo", func(w http.ResponseWriter, r *http.Request) {
+		photoset := route.Vars(r)["photoset"]
+
+		photo, err := getPhoto(db, route.Vars(r)["photo"])
+		if err != nil {
+			http.Error(w, err.Error(), 500)
+			return
+		}
+
+		ctx := photoCtx{
+			Id:    photo.Id,
+			Title: photo.Title,
+		}
+
+		nextPhoto, err := getNextPhotoInPhotoset(db, photoset, photo.DateUploaded)
+		if err == nil {
+			ctx.NextPhoto = "/photosets/" + photoset + "/photos/" + nextPhoto.Id
+		} else if err != sql.ErrNoRows {
+			http.Error(w, err.Error(), 500)
+			return
+		}
+
+		prevPhoto, err := getPrevPhotoInPhotoset(db, photoset, photo.DateUploaded)
+		if err == nil {
+			ctx.PrevPhoto = "/photosets/" + photoset + "/photos/" + prevPhoto.Id
+		} else if err != sql.ErrNoRows {
+			http.Error(w, err.Error(), 500)
+			return
+		}
+
+		w.Header().Set("Content-Type", "text/html")
+		err = templates.ExecuteTemplate(w, "photo.tmpl", ctx)
+		if err != nil {
+			http.Error(w, err.Error(), 500)
+			return
 		}
 	})
 
@@ -255,13 +301,43 @@ func getNextPhoto(db *sql.DB, date int) (record photoRecord, err error) {
 	return record, err
 }
 
+func getPrevPhotoInPhotoset(db *sql.DB, photoset string, date int) (record photoRecord, err error) {
+	row := db.QueryRow(`
+    SELECT photo.Id, photo.Title, photo.DateUploaded
+    FROM photo
+    INNER JOIN photoset_member ON photo.Id = photoset_member.Photo
+    WHERE photo.DateUploaded < ?
+    AND photoset_member.Photoset = ?
+    ORDER BY photo.DateUploaded DESC
+    LIMIT 1`,
+		date, photoset)
+
+	err = row.Scan(&record.Id, &record.Title, &record.DateUploaded)
+	return record, err
+}
+
+func getNextPhotoInPhotoset(db *sql.DB, photoset string, date int) (record photoRecord, err error) {
+	row := db.QueryRow(`
+    SELECT photo.Id, photo.Title, photo.DateUploaded
+    FROM photo
+    INNER JOIN photoset_member ON photo.Id = photoset_member.Photo
+    WHERE photo.DateUploaded > ?
+    AND photoset_member.Photoset = ?
+    ORDER BY photo.DateUploaded ASC
+    LIMIT 1`,
+		date, photoset)
+
+	err = row.Scan(&record.Id, &record.Title, &record.DateUploaded)
+	return record, err
+}
+
 func getPhotosInSet(db *sql.DB, photoset string, pageNo int) (records []photoRecord, err error) {
 	rows, err := db.Query(`
     SELECT photo.Id, photo.Title
     FROM photo
     INNER JOIN photoset_member ON photo.Id = photoset_member.Photo
     WHERE photoset_member.Photoset = ?
-    ORDER BY DateUploaded DESC
+    ORDER BY DateUploaded ASC
     LIMIT 10
     OFFSET ?`,
 		photoset,
