@@ -19,4 +19,4 @@ which is currently produced by [hawx/hall-of-mirrors][].
 
 Once the data has been indexed you can spin up a local server to view your photos.
 
-[hall-of-mirrors]: https://github.com/hawx/hall-of-mirrors/
+[hawx/hall-of-mirrors]: https://github.com/hawx/hall-of-mirrors/
