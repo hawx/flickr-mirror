@@ -6,14 +6,14 @@ import (
 )
 
 var templates = hadfield.Templates{
-	Command: `usage: flickr-mirror [command] [arguments]
+	Help: `Usage: flickr-mirror [command] [arguments]
 
   Something to do with mirroring flickr or something.
 
   Commands: {{range .}}
     {{.Name | printf "%-15s"}} # {{.Short}}{{end}}
 `,
-	Help: `usage: example {{.Usage}}
+	Command: `Usage: flickr-mirror {{.Usage}}
 {{.Long}}
 `,
 }
