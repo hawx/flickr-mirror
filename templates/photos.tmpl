@@ -16,6 +16,16 @@
         <a href="/photos/{{.Id}}">
           <img src="/photo/{{.Id}}/photo_z.jpg" />
           <h3>{{.Title}}</h3>
+          <small>
+            {{ if .Location }}
+            taken in
+            <strong>{{.Location}}</strong>
+            {{ end }}
+            {{ if .Camera }}
+            with a
+            <strong>{{.Camera}}</strong>
+            {{ end }}
+          </small>
         </a>
       </div>
       {{ end }}

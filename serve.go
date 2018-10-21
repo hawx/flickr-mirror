@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"path/filepath"
 	"strconv"
+	"strings"
 
 	_ "github.com/mxk/go-sqlite/sqlite3"
 	"hawx.me/code/hadfield"
@@ -235,16 +236,36 @@ type photosetMemberRecord struct {
 }
 
 type photoRecord struct {
-	Id           string
-	Title        string
-	DateUploaded int
+	Id            string
+	Title         string
+	DateUploaded  int
+	DateTaken     int
+	Camera        string
+	Neighbourhood string
+	Locality      string
+	Region        string
+}
+
+func (record photoRecord) Location() string {
+	var parts []string
+	if record.Neighbourhood != "" {
+		parts = append(parts, record.Neighbourhood)
+	}
+	if record.Locality != "" {
+		parts = append(parts, record.Locality)
+	}
+	if record.Region != "" {
+		parts = append(parts, record.Region)
+	}
+
+	return strings.Join(parts, ", ")
 }
 
 func getPhotos(db *sql.DB, pageNo int) (records []photoRecord, err error) {
 	rows, err := db.Query(`
-    SELECT Id, Title
+    SELECT Id, Title, DateUploaded, DateTaken, Camera, Neighbourhood, Locality, Region
     FROM photo
-    ORDER BY DateUploaded DESC
+    ORDER BY DateTaken DESC
     LIMIT 10
     OFFSET ?`,
 		pageNo*10)
@@ -255,7 +276,7 @@ func getPhotos(db *sql.DB, pageNo int) (records []photoRecord, err error) {
 
 	for rows.Next() {
 		var record photoRecord
-		if err = rows.Scan(&record.Id, &record.Title); err != nil {
+		if err = rows.Scan(&record.Id, &record.Title, &record.DateUploaded, &record.DateTaken, &record.Camera, &record.Neighbourhood, &record.Locality, &record.Region); err != nil {
 			return records, err
 		}
 		records = append(records, record)
@@ -266,59 +287,59 @@ func getPhotos(db *sql.DB, pageNo int) (records []photoRecord, err error) {
 
 func getPhoto(db *sql.DB, photo string) (record photoRecord, err error) {
 	row := db.QueryRow(`
-    SELECT Id, Title, DateUploaded
+    SELECT Id, Title, DateUploaded, DateTaken, Camera, Neighbourhood, Locality, Region
     FROM photo
     WHERE Id = ?`,
 		photo)
 
-	err = row.Scan(&record.Id, &record.Title, &record.DateUploaded)
+	err = row.Scan(&record.Id, &record.Title, &record.DateUploaded, &record.DateTaken, &record.Camera, &record.Neighbourhood, &record.Locality, &record.Region)
 	return record, err
 }
 
 func getPrevPhoto(db *sql.DB, date int) (record photoRecord, err error) {
 	row := db.QueryRow(`
-    SELECT Id, Title, DateUploaded
+    SELECT Id, Title, DateUploaded, DateTaken, Camera, Neighbourhood, Locality, Region
     FROM photo
-    WHERE DateUploaded < ?
-    ORDER BY DateUploaded DESC
+    WHERE DateTaken < ?
+    ORDER BY DateTaken DESC
     LIMIT 1`,
 		date)
 
-	err = row.Scan(&record.Id, &record.Title, &record.DateUploaded)
+	err = row.Scan(&record.Id, &record.Title, &record.DateUploaded, &record.DateTaken, &record.Camera, &record.Neighbourhood, &record.Locality, &record.Region)
 	return record, err
 }
 
 func getNextPhoto(db *sql.DB, date int) (record photoRecord, err error) {
 	row := db.QueryRow(`
-    SELECT Id, Title, DateUploaded
+    SELECT Id, Title, DateUploaded, DateTaken, Camera, Neighbourhood, Locality, Region
     FROM photo
-    WHERE DateUploaded > ?
-    ORDER BY DateUploaded ASC
+    WHERE DateTaken > ?
+    ORDER BY DateTaken ASC
     LIMIT 1`,
 		date)
 
-	err = row.Scan(&record.Id, &record.Title, &record.DateUploaded)
+	err = row.Scan(&record.Id, &record.Title, &record.DateUploaded, &record.DateTaken, &record.Camera, &record.Neighbourhood, &record.Locality, &record.Region)
 	return record, err
 }
 
 func getPrevPhotoInPhotoset(db *sql.DB, photoset string, date int) (record photoRecord, err error) {
 	row := db.QueryRow(`
-    SELECT photo.Id, photo.Title, photo.DateUploaded
+    SELECT photo.Id, photo.Title, photo.DateUploaded, photo.DateTaken, photo.Camera, photo.Neighbourhood, photo.Locality, photo.Region
     FROM photo
     INNER JOIN photoset_member ON photo.Id = photoset_member.Photo
-    WHERE photo.DateUploaded < ?
+    WHERE photo.DateTaken < ?
     AND photoset_member.Photoset = ?
-    ORDER BY photo.DateUploaded DESC
+    ORDER BY photo.DateTaken DESC
     LIMIT 1`,
 		date, photoset)
 
-	err = row.Scan(&record.Id, &record.Title, &record.DateUploaded)
+	err = row.Scan(&record.Id, &record.Title, &record.DateUploaded, &record.DateTaken, &record.Camera, &record.Neighbourhood, &record.Locality, &record.Region)
 	return record, err
 }
 
 func getNextPhotoInPhotoset(db *sql.DB, photoset string, date int) (record photoRecord, err error) {
 	row := db.QueryRow(`
-    SELECT photo.Id, photo.Title, photo.DateUploaded
+    SELECT photo.Id, photo.Title, photo.DateUploaded, photo.DateTaken, photo.Camera, photo.Neighbourhood, photo.Locality, photo.Region
     FROM photo
     INNER JOIN photoset_member ON photo.Id = photoset_member.Photo
     WHERE photo.DateUploaded > ?
@@ -327,7 +348,7 @@ func getNextPhotoInPhotoset(db *sql.DB, photoset string, date int) (record photo
     LIMIT 1`,
 		date, photoset)
 
-	err = row.Scan(&record.Id, &record.Title, &record.DateUploaded)
+	err = row.Scan(&record.Id, &record.Title, &record.DateUploaded, &record.DateTaken, &record.Camera, &record.Neighbourhood, &record.Locality, &record.Region)
 	return record, err
 }
 
@@ -337,7 +358,7 @@ func getPhotosInSet(db *sql.DB, photoset string, pageNo int) (records []photoRec
     FROM photo
     INNER JOIN photoset_member ON photo.Id = photoset_member.Photo
     WHERE photoset_member.Photoset = ?
-    ORDER BY DateUploaded ASC
+    ORDER BY DateTaken ASC
     LIMIT 10
     OFFSET ?`,
 		photoset,
