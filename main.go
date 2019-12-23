@@ -19,6 +19,7 @@ var templates = hadfield.Templates{
 }
 
 var commands = hadfield.Commands{
+	cmdGrab,
 	cmdIndex,
 	cmdServe,
 }
