@@ -1,0 +1,11 @@
+github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
+github.com/mxk/go-sqlite v0.0.0-20140611214908-167da9432e1f h1:QlH4jpcTbMzpK5ymxjC6k/m22jkcS7uSUeiB9tF8qKs=
+github.com/mxk/go-sqlite v0.0.0-20140611214908-167da9432e1f/go.mod h1:pkc41e3zYdLbnNZr/Zr5u/Ozr7D0p8EorhQiE+DmM4Y=
+github.com/pkg/errors v0.8.1 h1:iURUrRGxPUNPdy5/HRSm+Yj6okJ6UtLINN0Q9M4+h3I=
+github.com/pkg/errors v0.8.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
+github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
+github.com/stretchr/testify v1.2.2/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXfy6kDkUVs=
+hawx.me/code/hadfield v0.0.0-20180420190601-72744ca377c0 h1:qRgBGQyD23TMvz/1FIgtQGOdTcI2697SROyFdoRmdtU=
+hawx.me/code/hadfield v0.0.0-20180420190601-72744ca377c0/go.mod h1:wzKgiz2WXn3UMieb1JDce006zbkZFKBu4qWO/w1u29Y=
+hawx.me/code/route v1.0.0 h1:oSH04y0xTXUY5dflvRyUYl+yqs5J/lDvbOwMJc80sYY=
+hawx.me/code/route v1.0.0/go.mod h1:SKWPgx9IKsK2Yy66xj1bSRBOTMwR6kFQcLMjgajaeAc=
